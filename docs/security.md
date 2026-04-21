@@ -1,18 +1,19 @@
-# Security Practices
+# Security Hardening & Safe Scaling
 
-## API Security
-- All sensitive API keys (Gemini, MongoDB) are stored in `.env` and never exposed to the frontend.
-- All API endpoints use validation and sanitization middleware.
-- CORS is restricted to allowed origins from `.env`.
-- HTTP security headers are enforced with `helmet`.
-- Rate limiting is applied globally to all endpoints.
+NagrikAI Pro is built to process requests safely across public domains mapping to zero-trust principles.
 
-## Client Security
-- No secrets or API keys are present in client code.
-- All Gemini/Google API calls are proxied through the backend.
+## Input Validation & Sanitization
+* Every JSON request hitting the Express server is first piped through `validationRequest.middleware.js`.
+* Constraints are strictly mapped using `Joi`.
+* **XSS Stripping**: Input values are scrubbed against malicious `<script>` boundaries preventing payload injection entirely native to the validation cycle.
 
-## Deployment
-- `.env` and sensitive files are listed in `.gitignore` and never committed.
-- Use HTTPS in production.
+## Deep Rate Limiting
+* **Global Pipeline**: Standard limits enforce API stability using memory-window buckets checking IPs natively.
+* **AI Token Bucketing**: A dedicated, isolated strict interceptor exists explicitly for `/api/gemini/explain` and `/chat`. The backend forces a hard cap of 5 executions per minute, preventing malicious exhaustion of the Gemini Cloud project quota.
 
-_Last reviewed: 21 April 2026_
+## Execution Headers
+* **CORS**: Completely whitelisted. ONLY the authorized React URLs (`localhost:5173`, `.web.app`, `.onrender.com`) are allowed past Preflight Origin evaluations natively blocking foreign domain scraping.
+* **Helmet**: Enforces rigid HTTP response headers natively.
+
+## Data Safety
+No underlying persistent database (SQL/NoSQL) stores active user Personally Identifiable Information (PII). All calculations are completely stateless mapping local contexts out.
