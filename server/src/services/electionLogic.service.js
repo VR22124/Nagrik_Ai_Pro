@@ -3,10 +3,13 @@ import { SCENARIOS } from "../data/scenarios.config.js";
 import { ELECTION_RULES } from "../data/electionRules.config.js";
 
 export function checkEligibility(age) {
-  if (age >= 18) {
-    return { eligible: true, reason: "Age is 18 or above" };
+  if (age < 18) {
+    return {
+      eligible: false,
+      reason: "AGE_BELOW_18"
+    };
   }
-  return { eligible: false, reason: "Must be 18+ to register as a voter" };
+  return { eligible: true, reason: "Age is 18 or above" };
 }
 
 export function mapForms(registrationStatus, scenario, isEligible) {

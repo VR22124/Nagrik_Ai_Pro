@@ -16,6 +16,7 @@ export function createApp() {
   const allowedOrigins = new Set(env.CORS_ORIGINS);
   allowedOrigins.add("http://localhost:5173");
   allowedOrigins.add("http://127.0.0.1:5173");
+  allowedOrigins.add("https://nagrik-ai-pro.onrender.com");
   
   app.use(helmet());
   app.use(
