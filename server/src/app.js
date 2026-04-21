@@ -14,6 +14,9 @@ import { errorHandler } from "./middleware/errorHandler.middleware.js";
 export function createApp() {
   const app = express();
   const allowedOrigins = new Set(env.CORS_ORIGINS);
+  allowedOrigins.add("http://localhost:5173");
+  allowedOrigins.add("http://127.0.0.1:5173");
+  
   app.use(helmet());
   app.use(
     cors({
@@ -22,7 +25,7 @@ export function createApp() {
         return callback(null, allowedOrigins.has(origin));
       },
       methods: ["GET", "POST", "OPTIONS"],
-      allowedHeaders: ["Content-Type"]
+      allowedHeaders: ["Content-Type", "Authorization"]
     })
   );
   app.use(express.json({ limit: "80kb" }));
