@@ -17,6 +17,7 @@ export function createApp() {
   allowedOrigins.add("http://localhost:5173");
   allowedOrigins.add("http://127.0.0.1:5173");
   allowedOrigins.add("https://nagrik-ai-pro.onrender.com");
+  allowedOrigins.add("https://nagrik-ai-pro.web.app");
   
   app.use(helmet());
   app.use(
