@@ -1,0 +1,33 @@
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
+
+async function postGemini(path, payload) {
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      console.error(`[geminiApi] ${path} failed:`, errorData?.error || res.status);
+      return null;
+    }
+
+    const data = await res.json();
+    const text = typeof data?.text === "string" ? data.text.trim() : "";
+    return text || null;
+  } catch (error) {
+    console.error(`[geminiApi] ${path} request error:`, error);
+    return null;
+  }
+}
+
+export async function generateSimpleExplanation(response, userContext = {}) {
+  return postGemini("/gemini/explain", { response, userContext });
+}
+
+export async function geminiChat(message, options = {}) {
+  const { userContext = {}, guidance = {} } = options;
+  return postGemini("/gemini/chat", { message, userContext, guidance });
+}

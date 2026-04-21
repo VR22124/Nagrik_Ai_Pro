@@ -1,0 +1,14 @@
+{
+  "name": "nagrikai-pro",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w server",
+    "dev:client": "npm run dev -w client",
+    "test": "npm run test -w server"
+  }
+}

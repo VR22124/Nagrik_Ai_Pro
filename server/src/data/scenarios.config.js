@@ -1,0 +1,41 @@
+export const SCENARIOS = {
+  FIRST_TIME: "first_time",
+  MIGRATED: "migrated",
+  LOST_ID: "lost_id",
+  CORRECTION: "correction",
+  UNKNOWN_STATUS: "unknown_status",
+  FIRST_TIME_MIGRATED: "first_time_migrated",
+  MIGRATED_INTRA_STATE: "migrated_intra_state",
+  MIGRATED_INTER_STATE: "migrated_inter_state",
+  LOST_ID_REGISTERED: "lost_id_registered",
+  ELIGIBLE_UNREGISTERED: "eligible_unregistered",
+  REGULAR_REGISTERED: "regular_registered",
+  REGISTERED_CHECK_BOOTH: "registered_check_booth",
+  REGISTERED_VERIFY_DETAILS: "registered_verify_details",
+  REGISTERED_NEVER_VOTED: "registered_never_voted",
+  ELIGIBILITY_UPCOMING: "eligibility_upcoming_election",
+  CONSTITUENCY_CONFUSION: "constituency_confusion",
+  RURAL_VOTER_GUIDANCE: "rural_voter_guidance",
+  URBAN_VOTER_GUIDANCE: "urban_voter_guidance"
+};
+
+export const SCENARIO_LABELS = {
+  [SCENARIOS.FIRST_TIME]: "First-time voter",
+  [SCENARIOS.MIGRATED]: "Migrated voter",
+  [SCENARIOS.LOST_ID]: "Lost voter ID",
+  [SCENARIOS.CORRECTION]: "Correction needed",
+  [SCENARIOS.UNKNOWN_STATUS]: "Unknown registration status",
+  [SCENARIOS.FIRST_TIME_MIGRATED]: "First-time voter who migrated",
+  [SCENARIOS.MIGRATED_INTRA_STATE]: "Migrated within same state",
+  [SCENARIOS.MIGRATED_INTER_STATE]: "Migrated across states",
+  [SCENARIOS.LOST_ID_REGISTERED]: "Registered voter who lost ID",
+  [SCENARIOS.ELIGIBLE_UNREGISTERED]: "Eligible but unregistered",
+  [SCENARIOS.REGULAR_REGISTERED]: "Registered voter with no major issue",
+  [SCENARIOS.REGISTERED_CHECK_BOOTH]: "Registered voter checking booth details",
+  [SCENARIOS.REGISTERED_VERIFY_DETAILS]: "Registered voter verifying details",
+  [SCENARIOS.REGISTERED_NEVER_VOTED]: "Registered voter who has not voted before",
+  [SCENARIOS.ELIGIBILITY_UPCOMING]: "Eligibility check for upcoming elections",
+  [SCENARIOS.CONSTITUENCY_CONFUSION]: "Voter confused about constituency",
+  [SCENARIOS.RURAL_VOTER_GUIDANCE]: "Rural voter guidance flow",
+  [SCENARIOS.URBAN_VOTER_GUIDANCE]: "Urban voter guidance flow"
+};
