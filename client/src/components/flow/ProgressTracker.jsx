@@ -5,7 +5,9 @@ function ProgressItem({ label, done, onToggle }) {
       onClick={onToggle}
       aria-pressed={done}
       className={`rounded-xl border p-3 text-left transition-colors ${
-        done ? "bg-green-50 border-green-300 text-green-900" : "bg-white/70 border-slate-200 text-slate-700"
+        done
+          ? "bg-green-50 border-green-300 text-green-900"
+          : "bg-white/70 border-slate-200 text-slate-700"
       }`}
     >
       <p className="text-sm font-medium line-clamp-2">{label}</p>
@@ -35,7 +37,10 @@ export default function ProgressTracker({ progress, onToggle }) {
       </div>
 
       <div className="h-2.5 bg-slate-200 rounded-full overflow-hidden mb-4">
-        <div className="h-full bg-blue-600 rounded-full transition-all duration-300" style={{ width: `${completion}%` }} />
+        <div
+          className="h-full bg-blue-600 rounded-full transition-all duration-300"
+          style={{ width: `${completion}%` }}
+        />
       </div>
 
       <div className="grid md:grid-cols-2 gap-2.5">

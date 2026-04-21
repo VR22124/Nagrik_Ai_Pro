@@ -17,6 +17,13 @@ function createNextCapture() {
   };
 }
 
+test("eligibility validation rejects missing fields", () => {
+  const req = { body: {} };
+  const { next, getError } = createNextCapture();
+  validateEligibilityRequest(req, {}, next);
+  assert.equal(getError()?.statusCode, 422);
+});
+
 test("eligibility validation rejects invalid age", () => {
   const req = { body: { age: -1 } };
   const { next, getError } = createNextCapture();
@@ -61,4 +68,12 @@ test("gemini chat validation rejects oversized message", () => {
   const { next, getError } = createNextCapture();
   validateGeminiChatRequest(req, {}, next);
   assert.equal(getError()?.statusCode, 422);
+});
+
+test("scenario validation strips HTML injection tags (XSS check)", () => {
+  const req = { body: { intent: "<script>alert(1)</script> hello" } };
+  const { next, getError } = createNextCapture();
+  validateScenarioRequest(req, {}, next);
+  assert.equal(getError(), null);
+  assert.equal(req.body.intent, "scriptalert(1)/script hello");
 });

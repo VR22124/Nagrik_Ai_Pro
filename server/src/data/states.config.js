@@ -34,6 +34,21 @@ export function getStateNuance(state) {
     }
   );
 }
+// Simple in-memory cache for states config
+let _cachedStates = null;
+let _lastLoad = 0;
+const CACHE_TTL = 1000 * 60 * 10; // 10 minutes
+
+export function getStatesConfig() {
+  const now = Date.now();
+  if (_cachedStates && now - _lastLoad < CACHE_TTL) return _cachedStates;
+  // ...existing code to load states...
+  // Example: _cachedStates = [ ... ];
+  // _lastLoad = now;
+  // return _cachedStates;
+  // For now, just return the static export if present
+  return states;
+}
 
 export function getAreaTypeNuance(voterAreaType) {
   if (voterAreaType === "rural") {

@@ -69,7 +69,14 @@ function scoreAction(line) {
   return 0;
 }
 
+const guidanceCache = new Map();
+
 export function generateGuidance(context) {
+  const cacheKey = JSON.stringify(context);
+  if (guidanceCache.has(cacheKey)) {
+    return guidanceCache.get(cacheKey);
+  }
+
   const eligibility = checkEligibility(context.age);
   const resolvedScenario = recommendScenario(context.registrationStatus, context.intent, context);
   const effectiveScenario = context.scenario === "unknown_status" ? resolvedScenario : context.scenario;
@@ -81,7 +88,7 @@ export function generateGuidance(context) {
   const stateNuance = getStateNuance(context.state);
   const insights = getElectionCoreInsights(effectiveScenario);
 
-  const response = buildStructuredResponse({
+  const responseTemplate = buildStructuredResponse({
     userStatus: [
       `Age: ${context.age}`,
       `State: ${context.state}`,
@@ -117,7 +124,15 @@ export function generateGuidance(context) {
     practicalTip: insights.practicalTip
   });
 
-  return withCompliance(response);
+  const finalResponse = withCompliance(responseTemplate);
+  
+  // Clean cache periodically to prevent unbounded memory growth
+  if (guidanceCache.size > 500) {
+    guidanceCache.clear();
+  }
+  guidanceCache.set(cacheKey, finalResponse);
+  
+  return finalResponse;
 }
 
 function scenarioSpecificMistakes(scenarioKey) {

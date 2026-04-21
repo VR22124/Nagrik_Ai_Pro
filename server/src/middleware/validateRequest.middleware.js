@@ -10,7 +10,7 @@ function isPlainObject(value) {
 
 function sanitizeText(value, maxLength = 500) {
   return String(value || "")
-    .replace(/[\u0000-\u001f\u007f]/g, " ")
+    .replace(/[\u0000-\u001f\u007f<>]/g, " ") // Basic injection prevention (strips `<` and `>`)
     .trim()
     .slice(0, maxLength);
 }

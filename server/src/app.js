@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import helmet from "helmet";
 import guidanceRoutes from "./routes/guidance.routes.js";
 import eligibilityRoutes from "./routes/eligibility.routes.js";
 import scenariosRoutes from "./routes/scenarios.routes.js";
@@ -13,6 +14,7 @@ import { errorHandler } from "./middleware/errorHandler.middleware.js";
 export function createApp() {
   const app = express();
   const allowedOrigins = new Set(env.CORS_ORIGINS);
+  app.use(helmet());
   app.use(
     cors({
       origin(origin, callback) {

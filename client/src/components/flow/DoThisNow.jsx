@@ -9,7 +9,10 @@ export default function DoThisNow({ steps = [], warnings = [] }) {
       {steps.length ? (
         <ol className="space-y-2.5">
           {steps.map((item, idx) => (
-            <li key={item} className="rounded-xl border border-slate-200 bg-white/70 p-3 text-sm text-slate-800">
+            <li
+              key={item}
+              className="rounded-xl border border-slate-200 bg-white/70 p-3 text-sm text-slate-800"
+            >
               <p className="line-clamp-2">
                 <span className="font-semibold text-slate-900">Step {idx + 1}: </span>
                 {item}
@@ -24,7 +27,10 @@ export default function DoThisNow({ steps = [], warnings = [] }) {
           <p className="text-sm font-semibold text-amber-900 mb-2">Smart Warnings</p>
           <ul className="space-y-2">
             {warnings.map((warning) => (
-              <li key={warning} className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+              <li
+                key={warning}
+                className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900"
+              >
                 <p className="line-clamp-2">{warning}</p>
               </li>
             ))}

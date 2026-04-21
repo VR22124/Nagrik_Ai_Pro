@@ -10,5 +10,13 @@
     "dev": "npm run dev -w server",
     "dev:client": "npm run dev -w client",
     "test": "npm run test -w server"
+  },
+  "dependencies": {
+    "helmet": "^8.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.4",
+    "eslint-plugin-react": "^7.37.5",
+    "prettier": "^3.8.3"
   }
 }

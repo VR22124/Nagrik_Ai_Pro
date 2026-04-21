@@ -7,6 +7,25 @@ import {
 
 const router = Router();
 
+// Strict AI Endpoint Token Bucketing (5 requests per IP per minute)
+const aiRateLimitMap = new Map();
+function llmRateLimiter(req, res, next) {
+  const ip = req.ip || req.connection?.remoteAddress || "anonymous";
+  const now = Date.now();
+  if (!aiRateLimitMap.has(ip)) aiRateLimitMap.set(ip, []);
+  
+  const recentHits = aiRateLimitMap.get(ip).filter(timestamp => now - timestamp < 60000);
+  if (recentHits.length >= 5) {
+    return res.status(429).json({ error: "Rate limit exceeded. Please wait a minute before requesting more AI actions." });
+  }
+  
+  recentHits.push(now);
+  aiRateLimitMap.set(ip, recentHits);
+  
+  // Safely cull the IP map against DDOS exhaustion
+  if (aiRateLimitMap.size > 1000) aiRateLimitMap.clear();
+  next();
+}
 const BASE_POLICY = [
   "You are helping a user in an Indian election guidance system.",
   "Follow Election Commission of India process language.",
@@ -168,7 +187,7 @@ async function callGemini(prompt, contextTag, options = {}) {
   return null;
 }
 
-router.post("/explain", validateGeminiExplainRequest, async (req, res) => {
+router.post("/explain", llmRateLimiter, validateGeminiExplainRequest, async (req, res) => {
   try {
     const { response: guidance, userContext = {} } = req.body || {};
     if (!guidance || typeof guidance !== "object") {
@@ -184,7 +203,7 @@ router.post("/explain", validateGeminiExplainRequest, async (req, res) => {
   }
 });
 
-router.post("/chat", validateGeminiChatRequest, async (req, res) => {
+router.post("/chat", llmRateLimiter, validateGeminiChatRequest, async (req, res) => {
   try {
     const { message, userContext = {}, guidance = {} } = req.body || {};
     if (!message || typeof message !== "string" || !message.trim()) {
