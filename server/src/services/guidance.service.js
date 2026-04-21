@@ -80,8 +80,9 @@ export function generateGuidance(context) {
   const eligibility = checkEligibility(context.age);
 
   // Critical Logic Fix: Under-18 absolute override 
-  if (!eligibility.eligible && eligibility.reason === "AGE_BELOW_18") {
-    const finalResponse = buildStructuredResponse({
+  if (eligibility.eligibilityStatus === "NOT_ELIGIBLE_AGE") {
+    const finalResponse = {
+      eligibilityStatus: "NOT_ELIGIBLE_AGE",
       userStatus: [
         `Age: ${context.age}`,
         "You are not eligible to vote yet"
@@ -90,30 +91,12 @@ export function generateGuidance(context) {
         "You can apply once you turn 18",
         "Keep your documents ready"
       ],
-      documentsNeeded: [
-        "Gather valid age and address proof documents for the future",
-        "Eligibility age rule: Must be 18 or above"
-      ],
+      documentsNeeded: [],
       importantDeadlines: [],
       nextSteps: [
-        "You will become eligible when you turn 18",
-        "You can prepare documents now"
-      ],
-      optionalHelpOptions: [
-        "Learn about the Constitution and Electoral process",
-        "Use simple-language mode"
-      ],
-      journeyTimeline: ["Wait for 18th Birthday", "Application Registration", "Verification", "Polling day"],
-      commonMistakes: [
-        "Applying before turning 18",
-        "Assuming student IDs replace formal address proofs"
-      ],
-      smartPrompts: [
-        "What exact documents will I need when I turn 18?"
-      ],
-      keyInsight: "Voting eligibility strictly requires the citizen to be 18 years of age or older according to Indian law.",
-      practicalTip: "Although you cannot register now, keeping your identity documents verified and corrected saves time later."
-    });
+        "Check eligibility again after turning 18"
+      ]
+    };
 
     if (guidanceCache.size > 500) guidanceCache.clear();
     guidanceCache.set(cacheKey, finalResponse);
@@ -122,7 +105,7 @@ export function generateGuidance(context) {
 
   const resolvedScenario = recommendScenario(context.registrationStatus, context.intent, context);
   const effectiveScenario = context.scenario === "unknown_status" ? resolvedScenario : context.scenario;
-  const forms = mapForms(context.registrationStatus, effectiveScenario, eligibility.eligible);
+  const forms = mapForms(context.registrationStatus, effectiveScenario, eligibility.isEligible);
   const requiredActions = buildScenarioActions(context, forms, effectiveScenario);
   const documentsNeeded = suggestDocuments(context);
   const timelineRisk = getTimelineRisk(context);

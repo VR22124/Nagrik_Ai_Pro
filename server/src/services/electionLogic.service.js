@@ -5,15 +5,16 @@ import { ELECTION_RULES } from "../data/electionRules.config.js";
 export function checkEligibility(age) {
   if (age < 18) {
     return {
-      eligible: false,
-      reason: "AGE_BELOW_18"
+      isEligible: false,
+      eligibilityStatus: "NOT_ELIGIBLE_AGE",
+      blockFurtherProcessing: true
     };
   }
-  return { eligible: true, reason: "Age is 18 or above" };
+  return { isEligible: true, eligibilityStatus: "ELIGIBLE", blockFurtherProcessing: false };
 }
 
 export function mapForms(registrationStatus, scenario, isEligible) {
-  if (!isEligible) return ["Wait until age eligibility and then apply on official portal"];
+  if (isEligible === false) return ["Wait until age eligibility and then apply on official portal"];
 
   if (
     scenario === SCENARIOS.LOST_ID ||

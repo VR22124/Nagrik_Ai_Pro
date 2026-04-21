@@ -261,35 +261,62 @@ export default function App() {
 
         {guidance ? (
           <Suspense fallback={<div className="p-8 text-center text-slate-500 animate-pulse">Loading guidance components...</div>}>
-            <section className="section-gap" aria-live="polite">
-              <SummaryHeader summary={getSummaryLine(guidance, form)} />
-            </section>
+            {guidance.eligibilityStatus === "NOT_ELIGIBLE_AGE" ? (
+              <section className="section-gap" aria-live="assertive">
+                <div className="glass-card p-6 md:p-8 bg-red-50 border-red-200">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-3xl" aria-hidden="true">🛑</span>
+                    <h2 className="text-xl md:text-2xl font-bold text-red-800">
+                      Not Eligible Yet
+                    </h2>
+                  </div>
+                  <p className="text-red-900 font-medium mb-4">
+                    Voting eligibility in India requires the citizen to be 18 years of age or older. You cannot register or participate until your 18th birthday.
+                  </p>
+                  <div className="space-y-4">
+                    {guidance.userStatus.map((status, idx) => (
+                      <p key={idx} className="text-sm text-red-800">• {status}</p>
+                    ))}
+                    {guidance.nextSteps.map((step, idx) => (
+                      <p key={idx} className="text-sm text-red-800 font-semibold">• {step}</p>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            ) : (
 
-            <section className="section-gap">
-              <ActionButtons actions={getActionButtons(guidance)} />
-            </section>
+              <>
+                <section className="section-gap" aria-live="polite">
+                  <SummaryHeader summary={getSummaryLine(guidance, form)} />
+                </section>
 
-            <section className="section-gap">
-              <DoThisNow 
-                steps={getDoThisNowSteps(guidance)} 
-                warnings={getSmartWarnings(guidance)} 
-              />
-            </section>
+                <section className="section-gap">
+                  <ActionButtons actions={getActionButtons(guidance)} />
+                </section>
 
-            <section className="section-gap flex justify-end">
-              <SimpleExplanationToggle
-                enabled={simpleExplain}
-                onToggle={handleExplainToggle}
-                loading={explainLoading}
-              />
-            </section>
+                <section className="section-gap">
+                  <DoThisNow 
+                    steps={getDoThisNowSteps(guidance)} 
+                    warnings={getSmartWarnings(guidance)} 
+                  />
+                </section>
 
-            <section className="section-gap">
-              <p className="text-xs text-slate-600 font-medium tracking-wide text-center">
-                Guidance is informational and process-oriented. Official submission and status updates
-                happen on official government designated platforms.
-              </p>
-            </section>
+                <section className="section-gap flex justify-end">
+                  <SimpleExplanationToggle
+                    enabled={simpleExplain}
+                    onToggle={handleExplainToggle}
+                    loading={explainLoading}
+                  />
+                </section>
+
+                <section className="section-gap">
+                  <p className="text-xs text-slate-600 font-medium tracking-wide text-center">
+                    Guidance is informational and process-oriented. Official submission and status updates
+                    happen on official government designated platforms.
+                  </p>
+                </section>
+              </>
+            )}
           </Suspense>
         ) : null}
 
