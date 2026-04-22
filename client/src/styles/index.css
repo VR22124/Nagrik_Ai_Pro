@@ -116,3 +116,14 @@ body {
 .duration-300 {
   transition-duration: 300ms;
 }
+
+#google_translate_element {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+}
+
+.goog-te-gadget {
+  font-size: 14px;
+}

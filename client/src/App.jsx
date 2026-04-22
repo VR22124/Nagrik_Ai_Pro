@@ -12,7 +12,7 @@ const SimpleExplanationToggle = React.lazy(() => import("./components/common/Sim
 const ActionButtons = React.lazy(() => import("./components/flow/ActionButtons"));
 const DoThisNow = React.lazy(() => import("./components/flow/DoThisNow"));
 const LocationExplorer = React.lazy(() => import("./components/flow/LocationExplorer"));
-const TopLanguageSelector = React.lazy(() => import("./components/common/TopLanguageSelector"));
+
 const ResumeSessionBanner = React.lazy(() => import("./components/common/ResumeSessionBanner"));
 
 import {
@@ -168,9 +168,7 @@ export default function App() {
         Skip to main content
       </a>
       <main id="main-content" className="app-shell relative" aria-label="Main Application Flow">
-        <Suspense fallback={null}>
-          <TopLanguageSelector />
-        </Suspense>
+
         <header className="glass-card p-6 md:p-7">
           <p className="kicker mb-2">NagrikAI Pro</p>
           <h1 className="text-2xl md:text-4xl font-bold leading-tight text-slate-900">
