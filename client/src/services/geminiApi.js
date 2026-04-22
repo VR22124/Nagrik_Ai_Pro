@@ -10,7 +10,9 @@ async function postGemini(path, payload) {
 
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
-      console.error(`[geminiApi] ${path} failed:`, errorData?.error || res.status);
+      if (import.meta.env.DEV) {
+        console.error(`[geminiApi] ${path} failed:`, errorData?.error || res.status);
+      }
       return null;
     }
 
@@ -18,7 +20,9 @@ async function postGemini(path, payload) {
     const text = typeof data?.text === "string" ? data.text.trim() : "";
     return text || null;
   } catch (error) {
-    console.error(`[geminiApi] ${path} request error:`, error);
+    if (import.meta.env.DEV) {
+      console.error(`[geminiApi] ${path} request error:`, error);
+    }
     return null;
   }
 }

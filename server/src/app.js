@@ -6,6 +6,7 @@ import eligibilityRoutes from "./routes/eligibility.routes.js";
 import scenariosRoutes from "./routes/scenarios.routes.js";
 import healthRoutes from "./routes/health.routes.js";
 import geminiRoutes from "./routes/gemini.routes.js";
+import logsRoutes from "./routes/logs.routes.js";
 import { env } from "./config/env.js";
 import { requestLogger } from "./middleware/requestLogger.middleware.js";
 import { createRateLimiter } from "./middleware/rateLimit.middleware.js";
@@ -45,6 +46,7 @@ export function createApp() {
   app.use("/api/guidance", guidanceRoutes);
   app.use("/api/eligibility", eligibilityRoutes);
   app.use("/api/scenarios", scenariosRoutes);
+  app.use("/api/logs", logsRoutes);
 
   app.use(errorHandler);
   return app;

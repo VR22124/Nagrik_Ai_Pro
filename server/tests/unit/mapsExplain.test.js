@@ -38,7 +38,7 @@ test("prompt uses intent+state when intent is long enough", () => {
 
 test("prompt handles missing fields gracefully", () => {
   const prompt = buildMapsExplainPrompt({});
-  assert.ok(prompt.includes("State: unknown"));
+  // New format uses "User profile:" and "Location: India" — no longer "State: unknown"
   assert.ok(prompt.includes("Location: India"));
   assert.ok(prompt.includes("Check official portal"));
 });

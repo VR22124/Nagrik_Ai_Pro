@@ -265,15 +265,15 @@ router.post("/chat", llmRateLimiter, validateGeminiChatRequest, async (req, res)
 
 router.post("/maps-explain", llmRateLimiter, validateGeminiMapsExplainRequest, async (req, res) => {
   try {
-    const { state, intent, registrationStatus, nextBestAction } = req.body || {};
+    const { state, intent, registrationStatus, nextBestAction, age, scenario } = req.body || {};
 
-    const cacheKey = `${state || ""}|${intent || ""}|${registrationStatus || ""}`;
+    const cacheKey = `${state || ""}|${intent || ""}|${registrationStatus || ""}|${age || ""}|${scenario || ""}`;
     const cached = getMapsCache(cacheKey);
     if (cached !== undefined) {
       return res.json({ text: cached });
     }
 
-    const prompt = buildMapsExplainPrompt({ state, intent, registrationStatus, nextBestAction });
+    const prompt = buildMapsExplainPrompt({ state, intent, registrationStatus, nextBestAction, age, scenario });
     const text = await callGemini(prompt, "maps-explain", {
       maxWords: 100,
       maxLines: 6,
