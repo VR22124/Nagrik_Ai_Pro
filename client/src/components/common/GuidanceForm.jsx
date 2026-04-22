@@ -1,14 +1,21 @@
 import React from "react";
+import {
+  SCENARIOS,
+  REGISTRATION_STATUSES,
+  MIGRATION_TYPES,
+  ADDRESS_PROOF_OPTIONS
+} from "../../utils/constants";
 
-const SCENARIOS = [
-  { value: "first_time", label: "First-time voter" },
-  { value: "first_time_migrated", label: "First-time + Migrated" },
-  { value: "migrated", label: "Migrated voter" },
-  { value: "lost_id", label: "Lost voter ID" },
-  { value: "correction", label: "Correction needed" },
-  { value: "unknown_status", label: "Unknown registration status" }
-];
-
+/**
+ * GuidanceForm — the primary voter information form.
+ *
+ * @param {object} props
+ * @param {object} props.form - Current form state values.
+ * @param {Function} props.setForm - State setter for the form object.
+ * @param {Function} props.onSubmit - Submit handler called with the form event.
+ * @param {boolean} props.loading - When true, disables the submit button.
+ * @param {string} props.error - Error message to display below the form.
+ */
 export default React.memo(function GuidanceForm({ form, setForm, onSubmit, loading, error }) {
   return (
     <section className="glass-card p-5 md:p-6 section-gap">
@@ -50,9 +57,11 @@ export default React.memo(function GuidanceForm({ form, setForm, onSubmit, loadi
             onChange={(e) => setForm((f) => ({ ...f, registrationStatus: e.target.value }))}
             aria-required="true"
           >
-            <option value="registered">Registered</option>
-            <option value="not_registered">Not registered</option>
-            <option value="unsure">Unsure</option>
+            {REGISTRATION_STATUSES.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
           </select>
         </div>
         <div className="space-y-1">
@@ -83,9 +92,11 @@ export default React.memo(function GuidanceForm({ form, setForm, onSubmit, loadi
             value={form.migrationType}
             onChange={(e) => setForm((f) => ({ ...f, migrationType: e.target.value }))}
           >
-            <option value="unspecified">Migration type (optional)</option>
-            <option value="intra_state">Moved within same state</option>
-            <option value="inter_state">Moved from another state</option>
+            {MIGRATION_TYPES.map((m) => (
+              <option key={m.value} value={m.value}>
+                {m.label}
+              </option>
+            ))}
           </select>
         </div>
         <div className="space-y-1">
@@ -100,8 +111,11 @@ export default React.memo(function GuidanceForm({ form, setForm, onSubmit, loadi
               setForm((f) => ({ ...f, hasAddressProof: e.target.value === "true" }))
             }
           >
-            <option value="true">I have current address proof</option>
-            <option value="false">I do not have current address proof</option>
+            {ADDRESS_PROOF_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
           </select>
         </div>
         <div className="space-y-1 md:col-span-2">
@@ -116,8 +130,8 @@ export default React.memo(function GuidanceForm({ form, setForm, onSubmit, loadi
             onChange={(e) => setForm((f) => ({ ...f, intent: e.target.value }))}
           />
         </div>
-        <button 
-          disabled={loading} 
+        <button
+          disabled={loading}
           className="btn-primary w-fit mt-1 disabled:opacity-60 focus:ring-2 focus:ring-blue-700"
           aria-live="polite"
           aria-busy={loading}

@@ -1,7 +1,7 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://nagrik-ai-pro.onrender.com/api";
+import { API_BASE_URL } from "../utils/constants";
 
 export async function fetchGuidance(payload) {
-  const response = await fetch(`${API_BASE}/guidance/generate`, {
+  const response = await fetch(`${API_BASE_URL}/guidance/generate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)
@@ -12,3 +12,4 @@ export async function fetchGuidance(payload) {
   }
   return response.json();
 }
+
