@@ -33,17 +33,18 @@
    cd client
    npm install
    ```
-2. Create your `.env` file:
-   ```bash
-   cp .env.example .env
+2. **Configure API URL**:
+   By default, the project is configured for the **Live Production API** in `src/services/apiBase.js`.
+   To test with your **local server**, update `client/src/services/apiBase.js`:
+   ```javascript
+   export const API_BASE_URL = "http://localhost:4000";
    ```
-3. Open `.env` and configure:
-   * `VITE_API_BASE_URL`: `http://localhost:4000/api`
-4. Start the frontend:
+3. Start the frontend:
    ```bash
    npm run dev
    ```
-5. Visit `http://localhost:5173` in your browser.
+4. Visit `http://localhost:5173` in your browser.
+
 
 ## Firebase Configuration (Auth & Firestore)
 To enable session persistence locally and in production:

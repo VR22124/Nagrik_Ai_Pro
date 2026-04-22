@@ -1,43 +1,35 @@
-# Features
+# 🚀 Key Features
 
-NagrikAI Pro implements the following core features:
+NagrikAI Pro is built to dismantle the barriers between citizens and their democratic right to vote.
 
-## 1. Election Guidance Engine
-* **What it does**: A deterministic rules engine running on the backend that evaluates age, state, and registration status against actual ECI rules.
-* **Why it matters**: Guarantees 100% accurate, hallucination-free legal guidance regarding eligibility and form numbers.
+---
 
-## 2. Smart Scenario Detection
-* **What it does**: Intelligently categorizes users into complex paths (e.g., "Migrated First-Time Voter" vs. "Correction Needed") based on dropdown selections and open-text intents.
-* **Why it matters**: Users often don't know the official terminology. The system translates their real-world situation into bureaucratic action items.
+### 1. Deterministic Election Logic (The Source of Truth)
+*   **What it does**: A rigid rules-engine on the backend that maps ECI (Election Commission of India) laws to structured data.
+*   **Why it matters**: Guarantees **100% legal accuracy**. Unlike basic AI apps, NagrikAI Pro uses AI to *explain* the truth, not to *guess* it.
+*   **How it helps**: Prevents citizens from filling out the wrong form or missing a deadline due to misinformation.
 
-## 3. Step-by-Step UI Flow
-* **What it does**: Renders complex processes as bite-sized, un-paginated UI components (Next Best Action, Do This Now, Smart Warnings).
-* **Why it matters**: Reduces cognitive overload and voter intimidation.
+### 2. Gemini-Powered "Simple Mode"
+*   **What it does**: Context-aware simplification of bureaucratic requirements using Google Gemini Flash.
+*   **Why it matters**: Indian election rules use complex terminology like "Overseas Elector" or "Transposition."
+*   **How it helps**: Translates "Bureaucratese" into "Plain English" (or other languages), reducing voter intimidation.
 
-## 4. Google Maps Polling Location Discovery
-* **What it does**: Dynamically generates Google Maps links pre-filled with search queries for Electoral Registration Offices (EROs) and polling booths specific to the user's state and scenario.
-* **Why it matters**: Bridges the gap between digital registration and physical voting.
+### 3. Hyper-Local "Last-Mile" Directions
+*   **What it does**: Injects deep-links into Google Maps for Electoral Registration Offices (EROs) and polling booths.
+*   **Why it matters**: Registration is digital, but often requires physical verification or booth-awareness.
+*   **How it helps**: Physically guides the user from their current GPS location to the exact spot they need to be.
 
-## 5. Gemini Smart Guidance (Explain Mode)
-* **What it does**: A toggleable feature that uses Google Gemini to rewrite the rigid legal guidance into simple, conversational paragraphs.
-* **Why it matters**: Makes bureaucratic language accessible to citizens of all education levels.
+### 4. Privacy-First "Resume Journey"
+*   **What it does**: Silently creates an anonymous secure session (Firebase Auth) and persists state (Firestore).
+*   **Why it matters**: Bureaucracy takes time. Users often need to step away to find documents.
+*   **How it helps**: Allows users to resume their registration guidance instantly on any device without ever creating an account or sharing PII.
 
-## 6. Google Translate Multilingual Support
-* **What it does**: A client-side translation selector that seamlessly translates the entire interface into regional Indian languages via Google Translate.
-* **Why it matters**: Ensures the platform is usable across India's incredibly diverse linguistic landscape without heavy backend translation infrastructure.
+### 5. Multi-Lingual Interface (ECI Aligned)
+*   **What it does**: Real-time translation into major Indian languages via the Google Translate Widget.
+*   **Why it matters**: Voting is a right for all, not just English speakers.
+*   **How it helps**: Democratizes the registration process for 900+ million citizens across diverse states.
 
-## 7. Firebase Auth (Anonymous Identity)
-* **What it does**: Transparently creates a secure, anonymous session ID the moment a user loads the app.
-* **Why it matters**: Protects user privacy (no PII required) while allowing the backend to track their session.
-
-## 8. Firestore Session Persistence
-* **What it does**: Saves the user's form inputs and current state to a secure cloud database.
-* **Why it matters**: Prevents users from losing their progress if they close the tab while looking for their Aadhar card.
-
-## 9. Resume Journey
-* **What it does**: Detects previous incomplete sessions upon page load and prompts the user to restore their data.
-* **Why it matters**: Vastly improves the completion rate of bureaucratic tasks by accommodating real-life interruptions.
-
-## 10. Analytics Tracking
-* **What it does**: Utilizes GA4 to track anonymized engagement metrics (e.g., scenarios encountered, forms generated).
-* **Why it matters**: Provides system administrators with critical insights into which voter registration flows are causing the most confusion nationally.
+### 6. Smart Action Prioritization
+*   **What it does**: An algorithmic "Do This Now" list that ranks actions by urgency (e.g., Age checks > Form filling > Booth finding).
+*   **Why it matters**: Prevents "Action Paralysis."
+*   **How it helps**: Tells the user exactly ONE thing to do first, then the next, ensuring completion.

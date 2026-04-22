@@ -18,6 +18,8 @@ The frontend uses Vitest and React Testing Library to test component utilities i
 cd client
 npm test
 ```
+*Current Coverage: 19/19 tests passing.*
+
 
 ## What is Covered?
 

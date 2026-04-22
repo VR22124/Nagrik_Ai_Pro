@@ -106,3 +106,22 @@ The Node.js backend exposes a stateless, RESTful API. All endpoints expect `appl
   "reasoning": "Since you need to submit Form 6 physically, you must visit the ERO."
 }
 ```
+## 5. POST /api/logs/session
+
+**Purpose**: Fire-and-forget logging of anonymous user interactions to the Google Sheets analytics pipeline.
+
+**Request Body**:
+```json
+{
+  "state": "Tamil Nadu",
+  "scenario": "first_time_migrated",
+  "action": "guidance_generated"
+}
+```
+
+**Response (200 OK)**:
+```json
+{
+  "success": true
+}
+```

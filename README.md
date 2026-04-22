@@ -1,20 +1,29 @@
-# NagrikAI Pro
+# NagrikAI Pro — Smart Indian Election Guidance
 
-## 🚀 Live Demo
-**[Link to Live Application]** *(Insert your Firebase/Render URL here!)*
+## 🚀 LIVE DEMO
+**[Live Web Application](https://nagrik-ai-pro.web.app)**
+**[Live API Endpoint](https://nagrik-ai-pro.onrender.com/api/health)**
 
-## Overview
-NagrikAI Pro is a modern, AI-powered election guidance system designed to help citizens smoothly navigate the complex electoral registration process. By mapping the nuanced rules of the Election Commission of India into a deterministic rules-engine and enhancing it with Google Gemini, NagrikAI Pro provides clear, actionable, and 100% accurate guidance to voters.
+> **Empowering 900+ Million Citizens with AI-Driven Clarity**
 
-## The Problem
-Millions of citizens face difficulties voting due to misinterpreting eligibility requirements, struggling with bureaucratic forms for migrating constituencies, or incorrectly assuming a lost ID card rescinds their voting rights. The process is scattered, jargon-heavy, and deeply intimidating.
 
-## The Solution
-NagrikAI Pro centralizes and demystifies the voter registration process by acting as a translation layer between the citizen and the legal framework. It features:
-* A **strictly deterministic legal rules engine** acting as the absolute source of truth to prevent AI hallucination.
-* A **step-by-step un-paginated UI** that isolates the precise tasks a user must complete right now.
-* A **Gemini AI enhancement layer** that translates complex electoral jargon into native, simple phrasing on demand.
-* A **Privacy-First architecture** that requires zero sensitive PII tracking while allowing users to save their progress.
+## ✨ Project Vision
+> "To ensure that every Indian citizen, regardless of language or education, can navigate the electoral process with the confidence of a legal expert."
+
+## 🏛️ Overview
+NagrikAI Pro is a production-grade, AI-powered election guidance system. It demystifies the Election Commission of India's (ECI) complex regulatory framework by mapping legal rules to a **deterministic engine** and enhancing them with **Google Gemini's** linguistic intelligence.
+
+## 🔴 The Problem
+Indian voter registration is a bureaucratic maze. Citizens face:
+- **Terminology Intimidation**: Jargon like "EPIC Transposition" or "Overseas Elector" confuses first-time voters.
+- **Migration Friction**: Moving cities requires specific forms (Form 8) that are often misinterpreted.
+- **The "Last Mile" Gap**: Users know *what* to fill but don't know *where* to go physically.
+
+## 🟢 The Solution
+NagrikAI Pro acts as a **smart translation layer** between the law and the citizen:
+- **100% Deterministic**: Logic is grounded in actual ECI rules, eliminating AI hallucinations.
+- **Action-First UI**: A clean, prioritized dashboard that tells you exactly ONE thing to do next.
+- **Privacy-First**: No names, no IDs, no phone numbers. Just guidance.
 
 ## Tech Stack
 * **Frontend**: React, Vite, TailwindCSS (Responsive, lazy-loaded UI)
