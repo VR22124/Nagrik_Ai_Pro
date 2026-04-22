@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function SummaryHeader({ summary }) {
+export default React.memo(function SummaryHeader({ summary }) {
   if (!summary) return null;
   return (
     <div className="glass-card w-full px-5 py-4 md:px-6 md:py-5 border-blue-200">
@@ -10,4 +10,4 @@ export default function SummaryHeader({ summary }) {
       </p>
     </div>
   );
-}
+});

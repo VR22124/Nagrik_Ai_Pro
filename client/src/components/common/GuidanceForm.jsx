@@ -9,7 +9,7 @@ const SCENARIOS = [
   { value: "unknown_status", label: "Unknown registration status" }
 ];
 
-export default function GuidanceForm({ form, setForm, onSubmit, loading, error }) {
+export default React.memo(function GuidanceForm({ form, setForm, onSubmit, loading, error }) {
   return (
     <section className="glass-card p-5 md:p-6 section-gap">
       <h2 className="text-lg font-semibold mb-4 text-slate-900">Start Your Journey</h2>
@@ -128,4 +128,4 @@ export default function GuidanceForm({ form, setForm, onSubmit, loading, error }
       {error ? <p role="alert" className="text-red-700 font-medium text-sm mt-3">{error}</p> : null}
     </section>
   );
-}
+});

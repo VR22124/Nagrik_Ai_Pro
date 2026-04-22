@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { geminiMapsExplain } from "../../services/geminiApi";
 import { trackEvent } from "../../services/analytics";
 
@@ -53,7 +53,7 @@ function trimResponse(text, maxWords = 100) {
   return `${words.slice(0, maxWords).join(" ")}...`;
 }
 
-export default function LocationExplorer({ form, guidance }) {
+export default React.memo(function LocationExplorer({ form, guidance }) {
   const [activeIndex, setActiveIndex] = useState(null);
   const [aiGuidance, setAiGuidance] = useState(null);
   const [aiRequested, setAiRequested] = useState(false);
@@ -175,4 +175,4 @@ export default function LocationExplorer({ form, guidance }) {
       </p>
     </section>
   );
-}
+});

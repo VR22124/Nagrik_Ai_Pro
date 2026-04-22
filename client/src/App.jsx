@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, Suspense } from "react";
+import React, { useMemo, useState, useEffect, Suspense, useCallback } from "react";
 import { fetchGuidance } from "./services/guidanceApi";
 import { generateSimpleExplanation } from "./services/geminiApi";
 import { simplifyGuidance } from "./utils/simpleExplain";
@@ -78,7 +78,7 @@ export default function App() {
     setSavedSession(null);
   }
 
-  async function onSubmit(event) {
+  const onSubmit = useCallback(async (event) => {
     event.preventDefault();
     setLoading(true);
     setError("");
@@ -106,7 +106,7 @@ export default function App() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [form, uid]);
 
   const nextBestAction = getNextBestAction(guidance);
   
