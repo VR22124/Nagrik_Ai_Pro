@@ -1,8 +1,8 @@
-import { API_BASE_URL } from "../utils/constants";
+import { API_BASE_URL } from "./apiBase";
 
 async function postGemini(path, payload) {
   try {
-    const res = await fetch(`${API_BASE_URL}${path}`, {
+    const res = await fetch(`${API_BASE_URL}/api${path}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)

@@ -1,7 +1,7 @@
-import { API_BASE_URL } from "../utils/constants";
+import { API_BASE_URL } from "./apiBase";
 
 export async function fetchGuidance(payload) {
-  const response = await fetch(`${API_BASE_URL}/guidance/generate`, {
+  const response = await fetch(`${API_BASE_URL}/api/guidance/generate`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload)

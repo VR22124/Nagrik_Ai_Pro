@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "../utils/constants";
+import { API_BASE_URL } from "./apiBase";
 
 /**
  * Log an anonymous session event to the backend (which forwards to Google Sheets).
@@ -8,7 +8,7 @@ import { API_BASE_URL } from "../utils/constants";
  */
 export async function logSession({ state, scenario, action }) {
   try {
-    await fetch(`${API_BASE_URL}/logs/session`, {
+    await fetch(`${API_BASE_URL}/api/logs/session`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ state, scenario, action })

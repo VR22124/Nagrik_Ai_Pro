@@ -43,9 +43,6 @@ export const ADDRESS_PROOF_OPTIONS = [
 
 // ─── API ──────────────────────────────────────────────────────────────────────
 
-/** Base URL for all backend API calls. Falls back to production Render URL. */
-export const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "https://nagrik-ai-pro.onrender.com/api";
 
 /** Maximum number of words to show in Gemini-simplified explanations. */
 export const GEMINI_MAX_WORDS = 95;
