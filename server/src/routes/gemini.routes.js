@@ -154,7 +154,8 @@ async function callGemini(prompt, contextTag, options = {}) {
       if (!response.ok) {
         console.error(`[gemini:${contextTag}] Gemini HTTP ${response.status}`);
         if ((response.status === 429 || response.status === 503) && attempt < maxAttempts) {
-          const waitMs = 250 * attempt;
+          // Exponential backoff: 1s, 2s, 4s on rate-limit / quota errors
+          const waitMs = 1000 * Math.pow(2, attempt - 1);
           await new Promise((resolve) => setTimeout(resolve, waitMs));
           continue;
         }
@@ -172,10 +173,11 @@ async function callGemini(prompt, contextTag, options = {}) {
       if (abortTimer) clearTimeout(abortTimer);
       console.error(`[gemini:${contextTag}] Request failed:`, error);
       if (attempt < maxAttempts) {
-        const waitMs = 250 * attempt;
-        await new Promise((resolve) => setTimeout(resolve, waitMs));
-        continue;
-      }
+          // Exponential backoff: 1s, 2s, 4s on transient failures
+          const waitMs = 1000 * Math.pow(2, attempt - 1);
+          await new Promise((resolve) => setTimeout(resolve, waitMs));
+          continue;
+        }
       return null;
     }
   }

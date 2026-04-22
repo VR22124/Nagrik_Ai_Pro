@@ -21,5 +21,7 @@ export const env = {
     process.env.CORS_ORIGINS ?? process.env.CLIENT_URL ?? "http://localhost:5173,http://127.0.0.1:5173"
   ),
   RATE_LIMIT_WINDOW_MS: parsePositiveNumber(process.env.RATE_LIMIT_WINDOW_MS ?? 60_000, 60_000),
-  RATE_LIMIT_MAX_REQUESTS: parsePositiveNumber(process.env.RATE_LIMIT_MAX_REQUESTS ?? 120, 120)
+  RATE_LIMIT_MAX_REQUESTS: parsePositiveNumber(process.env.RATE_LIMIT_MAX_REQUESTS ?? 120, 120),
+  /** Google Sheets Apps Script webhook URL for anonymous analytics logging. Optional. */
+  SHEETS_WEBHOOK_URL: process.env.SHEETS_WEBHOOK_URL ?? ""
 };
