@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://nagrik-ai-pro.onrender.com/api";
 
 export async function fetchGuidance(payload) {
   const response = await fetch(`${API_BASE}/guidance/generate`, {

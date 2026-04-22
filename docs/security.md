@@ -1,19 +1,41 @@
-# Security Hardening & Safe Scaling
+# Security Implementation
 
-NagrikAI Pro is built to process requests safely across public domains mapping to zero-trust principles.
+NagrikAI Pro is built with a "Privacy First" and "Defense in Depth" philosophy. Given the nature of electoral data, security is paramount.
 
-## Input Validation & Sanitization
-* Every JSON request hitting the Express server is first piped through `validationRequest.middleware.js`.
-* Constraints are strictly mapped using `Joi`.
-* **XSS Stripping**: Input values are scrubbed against malicious `<script>` boundaries preventing payload injection entirely native to the validation cycle.
+## 1. No PII Stored
+The system is explicitly designed to **never** request, process, or store Personally Identifiable Information (PII) such as:
+* Voter ID Numbers (EPIC)
+* Aadhar Numbers
+* Phone Numbers
+* Email Addresses
+* Full Names
 
-## Deep Rate Limiting
-* **Global Pipeline**: Standard limits enforce API stability using memory-window buckets checking IPs natively.
-* **AI Token Bucketing**: A dedicated, isolated strict interceptor exists explicitly for `/api/gemini/explain` and `/chat`. The backend forces a hard cap of 5 executions per minute, preventing malicious exhaustion of the Gemini Cloud project quota.
+All scenarios and intents are anonymized before hitting the backend.
 
-## Execution Headers
-* **CORS**: Completely whitelisted. ONLY the authorized React URLs (`localhost:5173`, `.web.app`, `.onrender.com`) are allowed past Preflight Origin evaluations natively blocking foreign domain scraping.
-* **Helmet**: Enforces rigid HTTP response headers natively.
+## 2. Firebase Security Rules
+While user sessions are stored in Firestore to allow journey resumption, the database is locked down. We use Firebase Anonymous Auth to generate a UID.
+The `firestore.rules` file strictly enforces that users can only read or write to their specific document:
 
-## Data Safety
-No underlying persistent database (SQL/NoSQL) stores active user Personally Identifiable Information (PII). All calculations are completely stateless mapping local contexts out.
+```javascript
+match /user_sessions/{uid} {
+  allow read, write: if request.auth != null && request.auth.uid == uid;
+}
+```
+This entirely mitigates mass-scraping or cross-session data leaks.
+
+## 3. Strict CORS Policies
+The backend Express server does not use wildcard `*` CORS origins. The `CORS_ORIGINS` environment variable explicitly maps to known, trusted frontend domains (e.g., `http://localhost:5173`, `https://nagrik-ai-pro.web.app`). Requests from unauthorized domains are blocked at the middleware layer.
+
+## 4. API Rate Limiting
+To protect against Denial of Service (DoS) attacks and to prevent abuse of our Gemini API quota, the backend utilizes `express-rate-limit`. 
+* Standard endpoints allow 120 requests per minute.
+* AI-specific endpoints (`/gemini/*`) are strictly limited to 15 requests per minute per IP.
+
+## 5. Request Validation & Sanitization
+Every backend route is protected by `express-validator` middleware:
+* **Size Limits**: `express.json({ limit: "80kb" })` prevents payload stuffing.
+* **Type Checking**: Inputs are strictly validated against expected Enums.
+* **XSS Protection**: Open-ended text inputs (like the "intent" field) are sanitized. HTML tags (`<`, `>`) are actively stripped before reaching the Gemini wrapper to prevent prompt injection.
+
+## 6. Secure Gemini Access
+The `GEMINI_API_KEY` never touches the frontend. All AI interactions run through the Node.js backend. This prevents key exfiltration from the browser's network inspector. Furthermore, the backend is configured to hard-crash on startup if the key is missing in production, preventing silent failures.

@@ -1,19 +1,43 @@
-# Core Features
+# Features
 
-## 1. Deterministic Guided Flow
-The core of NagrikAI Pro is its logic engine. Users input their current age, location, and voting background into a centralized form. Instead of receiving a dense FAQ document, the system calculates the exact sequence of events required (e.g., "Submit Form 6," "Provide Hostel utility bill," etc.) based purely on their specific combination of inputs.
+NagrikAI Pro implements the following core features:
 
-## 2. Action-Driven Interface
-The UI has been engineered to eliminate cognitive overload:
-* **Next Best Action Priority**: Steps are displayed sequentially. 
-* **Do This Now**: A strict list of immediate physical tasks is rendered for the user.
-* **Smart Warnings**: Predicts potential form rejection vectors (like "Address mismatch") and warns the user before they submit official documentation.
+## 1. Election Guidance Engine
+* **What it does**: A deterministic rules engine running on the backend that evaluates age, state, and registration status against actual ECI rules.
+* **Why it matters**: Guarantees 100% accurate, hallucination-free legal guidance regarding eligibility and form numbers.
 
-## 3. Strict Eligibility Blockades
-Users who attempt to navigate the system while underage are blocked instantly. The UI aggressively substitutes complex guidance forms for a single, unmistakable `Not Eligible Yet` banner to ensure zero confusion regarding the Indian Constitution's 18+ requirement.
+## 2. Smart Scenario Detection
+* **What it does**: Intelligently categorizes users into complex paths (e.g., "Migrated First-Time Voter" vs. "Correction Needed") based on dropdown selections and open-text intents.
+* **Why it matters**: Users often don't know the official terminology. The system translates their real-world situation into bureaucratic action items.
 
-## 4. Explain Mode (Gemini)
-Legal syntax is complex ("Verify constituency assignment prior to..." ). Users can toggle an AI-powered "Explain Mode" that queries Google Gemini to dynamically rewrite the deterministic backend guidance into extremely simple, accessible English.
+## 3. Step-by-Step UI Flow
+* **What it does**: Renders complex processes as bite-sized, un-paginated UI components (Next Best Action, Do This Now, Smart Warnings).
+* **Why it matters**: Reduces cognitive overload and voter intimidation.
 
-## 5. Context-Bound Chat Assistant
-Instead of a separate generic chatbot, the UI features a persistent ChatBox mapped directly to the user's evaluated state. If you ask the ChatBox "What do I do?", the AI already knows your exact age, registration status, and scenario via the Express proxy server, ensuring heavily contextualized advice.
+## 4. Google Maps Polling Location Discovery
+* **What it does**: Dynamically generates Google Maps links pre-filled with search queries for Electoral Registration Offices (EROs) and polling booths specific to the user's state and scenario.
+* **Why it matters**: Bridges the gap between digital registration and physical voting.
+
+## 5. Gemini Smart Guidance (Explain Mode)
+* **What it does**: A toggleable feature that uses Google Gemini to rewrite the rigid legal guidance into simple, conversational paragraphs.
+* **Why it matters**: Makes bureaucratic language accessible to citizens of all education levels.
+
+## 6. Google Translate Multilingual Support
+* **What it does**: A client-side translation selector that seamlessly translates the entire interface into regional Indian languages via Google Translate.
+* **Why it matters**: Ensures the platform is usable across India's incredibly diverse linguistic landscape without heavy backend translation infrastructure.
+
+## 7. Firebase Auth (Anonymous Identity)
+* **What it does**: Transparently creates a secure, anonymous session ID the moment a user loads the app.
+* **Why it matters**: Protects user privacy (no PII required) while allowing the backend to track their session.
+
+## 8. Firestore Session Persistence
+* **What it does**: Saves the user's form inputs and current state to a secure cloud database.
+* **Why it matters**: Prevents users from losing their progress if they close the tab while looking for their Aadhar card.
+
+## 9. Resume Journey
+* **What it does**: Detects previous incomplete sessions upon page load and prompts the user to restore their data.
+* **Why it matters**: Vastly improves the completion rate of bureaucratic tasks by accommodating real-life interruptions.
+
+## 10. Analytics Tracking
+* **What it does**: Utilizes GA4 to track anonymized engagement metrics (e.g., scenarios encountered, forms generated).
+* **Why it matters**: Provides system administrators with critical insights into which voter registration flows are causing the most confusion nationally.
