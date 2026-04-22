@@ -4,13 +4,13 @@ import { getFirestore } from "firebase/firestore";
 import { getAnalytics, isSupported } from "firebase/analytics";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCHN1sZKQ6Ul6IcBM0j9PU9z8vmJzpW3eM",
-  authDomain: "nagrik-ai-pro.firebaseapp.com",
-  projectId: "nagrik-ai-pro",
-  storageBucket: "nagrik-ai-pro.firebasestorage.app",
-  messagingSenderId: "725459403491",
-  appId: "1:725459403491:web:1711b80dc13e578bd9bbd6",
-  measurementId: "G-P0VF82X1BJ"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 let app = null;
