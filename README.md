@@ -22,13 +22,106 @@ NagrikAI Pro centralizes and demystifies the voter registration process by actin
 * **Testing**: Node Native Test Runner & Vitest (100% passing suite)
 * **Deployment**: Firebase Hosting (Frontend), Render (Backend)
 
-## Deep Google Ecosystem Integration
-1. **Google Gemini Flash**: Translates dense legal rules into simple language and answers contextual chat queries.
-2. **Firebase Auth (Anonymous)**: Generates secure session identities without forcing email signups.
-3. **Google Firestore**: Persists user journeys, allowing them to resume exactly where they left off.
-4. **Google Maps**: Dynamically routes users to their local Electoral Registration Offices (EROs).
-5. **Google Translate**: Translates the entire platform into regional Indian languages instantly.
-6. **Google Analytics 4**: Tracks anonymized scenarios to help administrators improve voting flows.
+## 🔌 Google Services Integration
+
+NagrikAI Pro deeply integrates six Google services, each serving a specific, functional role.
+
+---
+
+### 1. Google Gemini AI (Flash)
+| | |
+|---|---|
+| **Purpose** | Translates complex Indian election eligibility rules into plain, accessible language on demand |
+| **Implementation** | `server/src/routes/gemini.routes.js` + `server/src/services/mapsExplain.service.js` |
+| **Endpoints** | `POST /api/gemini/explain` — simplify guidance · `POST /api/gemini/chat` — Q&A · `POST /api/gemini/maps-explain` — location context |
+| **Retry logic** | Exponential backoff: 1s → 2s → 4s on HTTP 429 / 503 quota errors (max 3 attempts) |
+| **Fallback** | If Gemini is unavailable, a Toast notification informs the user and standard guidance is shown |
+| **UI indicator** | A `✨ Simplified by Gemini AI` badge appears on the result card when active |
+
+---
+
+### 2. Firebase Anonymous Authentication
+| | |
+|---|---|
+| **Purpose** | Provides session continuity without collecting any Personally Identifiable Information (PII) |
+| **Implementation** | `client/src/services/firebase.js` · `client/src/context/SessionContext.jsx` |
+| **Behaviour** | Users never create an account — a unique anonymous UID is generated silently on first load |
+| **Privacy** | No email, no name, no device fingerprint — only an ephemeral anonymous UID |
+
+---
+
+### 3. Cloud Firestore
+| | |
+|---|---|
+| **Purpose** | Persists the user's last guidance session so they can resume exactly where they left off |
+| **Implementation** | `client/src/services/sessionStore.js` (Firestore + localStorage fallback) |
+| **Collection** | `user_sessions/{uid}` — fields: `state`, `registrationStatus`, `scenario`, `intent`, `lastStep`, `timestamp` |
+| **Security rules** | `client/firestore.rules` — users can only read/write their own document (`request.auth.uid == uid`) |
+| **Throttle** | Max 1 Firestore write per 5 seconds per session to prevent quota exhaustion |
+
+---
+
+### 4. Google Analytics (GA4)
+| | |
+|---|---|
+| **Purpose** | Tracks anonymised interaction patterns to understand how citizens use the guidance flow |
+| **Implementation** | `client/src/services/analytics.js` |
+| **Events tracked** | `form_submitted`, `guidance_shown`, `gemini_simplified`, `maps_link_clicked`, `maps_opened`, `directions_opened`, `session_resumed`, `chat_message_sent`, `translate_link_clicked` |
+| **Privacy** | Zero PII in event parameters — no age values, no names, no IDs |
+
+---
+
+### 5. Google Maps
+| | |
+|---|---|
+| **Purpose** | Helps users find their nearest polling booth, Electoral Registration Office (ERO), or government building |
+| **Implementation** | `client/src/components/flow/LocationExplorer.jsx` |
+| **Features** | Browser geolocation (`navigator.geolocation`) for GPS-accurate searches · `🔍 Find` button opens Maps search · `👉 Directions` button opens turn-by-turn navigation via `maps/dir/?api=1&destination=...` |
+| **Geo badge** | `🎯 Using your current location` badge when GPS is granted; falls back to state-based search |
+
+---
+
+### 6. Google Translate (Widget)
+| | |
+|---|---|
+| **Purpose** | Makes the app accessible to non-English-speaking Indian citizens in their native language |
+| **Implementation** | `client/index.html` — Google Translate in-page widget via `translate.google.com/translate_a/element.js` |
+| **Behaviour** | In-place translation of all UI text without redirecting away from the app |
+
+---
+
+### 7. Google Sheets (Analytics Pipeline)
+| | |
+|---|---|
+| **Purpose** | Lightweight anonymous event logging for operational analytics |
+| **Implementation** | `server/src/services/sheetsLogger.service.js` · `server/src/routes/logs.routes.js` |
+| **Endpoint** | `POST /api/logs/session` — accepts `{ state, scenario, action }`, fire-and-forget |
+| **Setup** | Deploy the included Apps Script (see `sheetsLogger.service.js` header) and set `SHEETS_WEBHOOK_URL` in `server/.env` |
+
+---
+
+### Setup: Google Services Environment Variables
+
+```env
+# server/.env
+GEMINI_API_KEY=your-gemini-api-key
+SHEETS_WEBHOOK_URL=your-apps-script-web-app-url   # optional
+
+# client/.env
+VITE_FIREBASE_API_KEY=your-key
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
+VITE_FIREBASE_APP_ID=your-app-id
+VITE_FIREBASE_MEASUREMENT_ID=G-XXXXXXXXXX
+```
+
+### Deploy Firestore Security Rules
+```bash
+firebase deploy --only firestore:rules
+```
+
 
 ## Setup Instructions
 

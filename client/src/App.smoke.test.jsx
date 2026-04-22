@@ -1,4 +1,4 @@
-import { render, screen, cleanup } from "@testing-library/react";
+import { render, screen, cleanup, act } from "@testing-library/react";
 import { describe, it, expect, vi, afterEach } from "vitest";
 import React from "react";
 import App from "./App";
@@ -24,11 +24,18 @@ describe("App Smoke Test", () => {
   });
 
   it("renders without crashing", async () => {
-    render(<App />);
-    expect(screen.getByText("NagrikAI Pro")).toBeDefined();
-    expect(screen.getByText("Smart Election Guidance, Step by Step")).toBeDefined();
-    
-    // Check if the lazy-loaded GuidanceForm eventually renders
+    await act(async () => {
+      render(<App />);
+    });
+
+    // Header renders after Suspense/SessionProvider resolves
+    const heading = await screen.findByText("NagrikAI Pro");
+    expect(heading).toBeDefined();
+
+    const subheading = await screen.findByText("Smart Election Guidance, Step by Step");
+    expect(subheading).toBeDefined();
+
+    // Lazy-loaded GuidanceForm resolves
     const button = await screen.findByRole("button", { name: "Get My Next Step" });
     expect(button).toBeDefined();
   });
