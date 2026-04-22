@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import PropTypes from "prop-types";
 import { signInAnonymouslyIfNeeded } from "../services/firebase";
 import { saveSession as persistSession, loadSession as fetchSession } from "../services/sessionStore";
 
@@ -64,5 +65,9 @@ export function SessionProvider({ children }) {
     </SessionContext.Provider>
   );
 }
+
+SessionProvider.propTypes = {
+  children: PropTypes.node
+};
 
 export { SessionContext };

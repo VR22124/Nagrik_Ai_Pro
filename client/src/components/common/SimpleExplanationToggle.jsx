@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 /**
  * SimpleExplanationToggle — button that triggers Gemini-powered plain-language mode.
  * Displays a "Simplified by Gemini AI" badge when the simple mode is active.
@@ -27,3 +29,9 @@ export default function SimpleExplanationToggle({ enabled, onToggle, loading }) 
     </div>
   );
 }
+
+SimpleExplanationToggle.propTypes = {
+  enabled: PropTypes.bool.isRequired,
+  onToggle: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired
+};

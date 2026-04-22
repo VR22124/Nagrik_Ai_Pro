@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import PropTypes from "prop-types";
 import { TOAST_DISMISS_MS } from "../../utils/constants";
 
 const TYPE_STYLES = {
@@ -51,3 +52,9 @@ export default function Toast({ message, type = "info", onDismiss }) {
     </div>
   );
 }
+
+Toast.propTypes = {
+  message: PropTypes.string.isRequired,
+  type: PropTypes.oneOf(["info", "warning", "error"]),
+  onDismiss: PropTypes.func.isRequired
+};

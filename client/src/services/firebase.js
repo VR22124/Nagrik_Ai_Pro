@@ -22,9 +22,14 @@ try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
-  isSupported().then((supported) => {
-    if (supported) analytics = getAnalytics(app);
-  });
+  (async () => {
+    try {
+      const supported = await isSupported();
+      if (supported) analytics = getAnalytics(app);
+    } catch {
+      // ignore
+    }
+  })();
 } catch (err) {
   // Silent fallback
 }

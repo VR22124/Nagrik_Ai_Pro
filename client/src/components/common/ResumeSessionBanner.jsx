@@ -1,4 +1,5 @@
 import { trackEvent } from "../../services/analytics";
+import PropTypes from "prop-types";
 
 export default function ResumeSessionBanner({ session, onResume, onDismiss }) {
   if (!session) return null;
@@ -46,3 +47,12 @@ export default function ResumeSessionBanner({ session, onResume, onDismiss }) {
     </div>
   );
 }
+
+ResumeSessionBanner.propTypes = {
+  session: PropTypes.shape({
+    state: PropTypes.string,
+    scenario: PropTypes.string
+  }),
+  onResume: PropTypes.func.isRequired,
+  onDismiss: PropTypes.func.isRequired
+};

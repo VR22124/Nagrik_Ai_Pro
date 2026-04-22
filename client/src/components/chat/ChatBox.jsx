@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { geminiChat } from "../../services/geminiApi";
 import { trackEvent } from "../../services/analytics";
 
@@ -121,3 +122,8 @@ export default function ChatBox({ userContext = {}, guidance = {} }) {
     </>
   );
 }
+
+ChatBox.propTypes = {
+  userContext: PropTypes.object,
+  guidance: PropTypes.object
+};

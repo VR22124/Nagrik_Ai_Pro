@@ -1,6 +1,7 @@
 import React from "react";
+import PropTypes from "prop-types";
 
-export default React.memo(function SummaryHeader({ summary }) {
+const SummaryHeader = React.memo(function SummaryHeader({ summary }) {
   if (!summary) return null;
   return (
     <div className="glass-card w-full px-5 py-4 md:px-6 md:py-5 border-blue-200">
@@ -11,3 +12,9 @@ export default React.memo(function SummaryHeader({ summary }) {
     </div>
   );
 });
+
+SummaryHeader.propTypes = {
+  summary: PropTypes.string
+};
+
+export default SummaryHeader;

@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 /**
  * LoadingSpinner — accessible loading indicator.
  *
@@ -24,3 +26,8 @@ export default function LoadingSpinner({ size = "md", label = "Loading..." }) {
     </div>
   );
 }
+
+LoadingSpinner.propTypes = {
+  size: PropTypes.oneOf(["sm", "md", "lg"]),
+  label: PropTypes.string
+};

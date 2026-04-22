@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import {
   SCENARIOS,
   REGISTRATION_STATUSES,
@@ -16,7 +17,7 @@ import {
  * @param {boolean} props.loading - When true, disables the submit button.
  * @param {string} props.error - Error message to display below the form.
  */
-export default React.memo(function GuidanceForm({ form, setForm, onSubmit, loading, error }) {
+const GuidanceForm = React.memo(function GuidanceForm({ form, setForm, onSubmit, loading, error }) {
   return (
     <section className="glass-card p-5 md:p-6 section-gap">
       <h2 className="text-lg font-semibold mb-4 text-slate-900">Start Your Journey</h2>
@@ -143,3 +144,21 @@ export default React.memo(function GuidanceForm({ form, setForm, onSubmit, loadi
     </section>
   );
 });
+
+GuidanceForm.propTypes = {
+  form: PropTypes.shape({
+    age: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    state: PropTypes.string,
+    registrationStatus: PropTypes.string,
+    scenario: PropTypes.string,
+    migrationType: PropTypes.string,
+    hasAddressProof: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+    intent: PropTypes.string
+  }).isRequired,
+  setForm: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
+  error: PropTypes.string
+};
+
+export default GuidanceForm;

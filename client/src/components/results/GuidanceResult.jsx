@@ -1,4 +1,5 @@
 import React, { Suspense } from "react";
+import PropTypes from "prop-types";
 import {
   getSummaryLine,
   getActionButtons,
@@ -27,7 +28,7 @@ const SimpleExplanationToggle = React.lazy(() => import("../common/SimpleExplana
  * @param {boolean} props.explainLoading - Whether Gemini is currently fetching.
  * @param {Function} props.handleExplainToggle - Callback to toggle simple-explain mode.
  */
-export default React.memo(function GuidanceResult({
+const GuidanceResult = React.memo(function GuidanceResult({
   guidance,
   displayedGuidance,
   form,
@@ -104,3 +105,14 @@ export default React.memo(function GuidanceResult({
     </Suspense>
   );
 });
+
+GuidanceResult.propTypes = {
+  guidance: PropTypes.object,
+  displayedGuidance: PropTypes.object,
+  form: PropTypes.object.isRequired,
+  simpleExplain: PropTypes.bool.isRequired,
+  explainLoading: PropTypes.bool.isRequired,
+  handleExplainToggle: PropTypes.func.isRequired
+};
+
+export default GuidanceResult;

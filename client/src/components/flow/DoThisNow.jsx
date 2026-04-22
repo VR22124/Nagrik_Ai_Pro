@@ -1,6 +1,7 @@
 import React from "react";
+import PropTypes from "prop-types";
 
-export default React.memo(function DoThisNow({ steps = [], warnings = [] }) {
+const DoThisNow = React.memo(function DoThisNow({ steps = [], warnings = [] }) {
   if (!steps.length && !warnings.length) return null;
 
   return (
@@ -42,3 +43,10 @@ export default React.memo(function DoThisNow({ steps = [], warnings = [] }) {
     </section>
   );
 });
+
+DoThisNow.propTypes = {
+  steps: PropTypes.arrayOf(PropTypes.string),
+  warnings: PropTypes.arrayOf(PropTypes.string)
+};
+
+export default DoThisNow;

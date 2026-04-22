@@ -1,6 +1,7 @@
 import React from "react";
+import PropTypes from "prop-types";
 
-export default React.memo(function ActionButtons({ actions = [] }) {
+const ActionButtons = React.memo(function ActionButtons({ actions = [] }) {
   if (!actions.length) return null;
 
   return (
@@ -28,3 +29,15 @@ export default React.memo(function ActionButtons({ actions = [] }) {
     </section>
   );
 });
+
+ActionButtons.propTypes = {
+  actions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      url: PropTypes.string.isRequired,
+      helper: PropTypes.string
+    })
+  )
+};
+
+export default ActionButtons;

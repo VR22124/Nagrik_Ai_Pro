@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import PropTypes from "prop-types";
 import { geminiMapsExplain } from "../../services/geminiApi";
 import { trackEvent } from "../../services/analytics";
 import { logSession } from "../../services/logsApi";
@@ -81,7 +82,7 @@ function buildDirectionsUrl(query) {
 
 /* ─── Component ─────────────────────────────────────────────────────────────── */
 
-export default React.memo(function LocationExplorer({ form, guidance }) {
+const LocationExplorer = React.memo(function LocationExplorer({ form, guidance }) {
   const [activeIndex, setActiveIndex] = useState(null);
   const [aiGuidance, setAiGuidance] = useState(null);
   const [aiRequested, setAiRequested] = useState(false);
@@ -291,3 +292,16 @@ export default React.memo(function LocationExplorer({ form, guidance }) {
     </section>
   );
 });
+
+LocationExplorer.propTypes = {
+  form: PropTypes.shape({
+    intent: PropTypes.string,
+    state: PropTypes.string,
+    registrationStatus: PropTypes.string,
+    scenario: PropTypes.string,
+    age: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  }),
+  guidance: PropTypes.object
+};
+
+export default LocationExplorer;

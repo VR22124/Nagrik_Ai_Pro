@@ -9,7 +9,12 @@ async function postGemini(path, payload) {
     });
 
     if (!res.ok) {
-      const errorData = await res.json().catch(() => ({}));
+      let errorData = {};
+      try {
+        errorData = await res.json();
+      } catch {
+        // Ignore JSON parsing errors for error responses
+      }
       if (import.meta.env.DEV) {
         console.error(`[geminiApi] ${path} failed:`, errorData?.error || res.status);
       }
