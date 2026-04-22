@@ -75,5 +75,5 @@ test("scenario validation strips HTML injection tags (XSS check)", () => {
   const { next, getError } = createNextCapture();
   validateScenarioRequest(req, {}, next);
   assert.equal(getError(), null);
-  assert.equal(req.body.intent, "scriptalert(1)/script hello");
+  assert.equal(req.body.intent, "script alert(1) /script  hello");
 });

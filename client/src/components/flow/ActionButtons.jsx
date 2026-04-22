@@ -1,4 +1,6 @@
-export default function ActionButtons({ actions = [] }) {
+import React from "react";
+
+export default React.memo(function ActionButtons({ actions = [] }) {
   if (!actions.length) return null;
 
   return (
@@ -25,4 +27,4 @@ export default function ActionButtons({ actions = [] }) {
       </div>
     </section>
   );
-}
+});

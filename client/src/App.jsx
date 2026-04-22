@@ -1,13 +1,19 @@
-import React, { useMemo, useState, Suspense } from "react";
+import React, { useMemo, useState, useEffect, Suspense } from "react";
 import { fetchGuidance } from "./services/guidanceApi";
 import { generateSimpleExplanation } from "./services/geminiApi";
 import { simplifyGuidance } from "./utils/simpleExplain";
+import { signInAnonymouslyIfNeeded } from "./services/firebase";
+import { saveSession, loadSession } from "./services/sessionStore";
+import { trackEvent } from "./services/analytics";
 
 const SummaryHeader = React.lazy(() => import("./components/common/SummaryHeader"));
 const NextBestAction = React.lazy(() => import("./components/flow/NextBestAction"));
 const SimpleExplanationToggle = React.lazy(() => import("./components/common/SimpleExplanationToggle"));
 const ActionButtons = React.lazy(() => import("./components/flow/ActionButtons"));
 const DoThisNow = React.lazy(() => import("./components/flow/DoThisNow"));
+const LocationExplorer = React.lazy(() => import("./components/flow/LocationExplorer"));
+const TopLanguageSelector = React.lazy(() => import("./components/common/TopLanguageSelector"));
+const ResumeSessionBanner = React.lazy(() => import("./components/common/ResumeSessionBanner"));
 
 import {
   getSummaryLine,
@@ -24,14 +30,7 @@ import {
 
 const ChatBox = React.lazy(() => import("./components/chat/ChatBox"));
 
-const SCENARIOS = [
-  { value: "first_time", label: "First-time voter" },
-  { value: "first_time_migrated", label: "First-time + Migrated" },
-  { value: "migrated", label: "Migrated voter" },
-  { value: "lost_id", label: "Lost voter ID" },
-  { value: "correction", label: "Correction needed" },
-  { value: "unknown_status", label: "Unknown registration status" }
-];
+const GuidanceForm = React.lazy(() => import("./components/common/GuidanceForm"));
 
 const FLOW_TITLES = ["What You Should Do", "Be Careful", "Why This Matters"];
 
@@ -53,6 +52,31 @@ export default function App() {
   const [explainLoading, setExplainLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [uid, setUid] = useState(null);
+  const [savedSession, setSavedSession] = useState(null);
+
+  // Firebase anonymous auth + session restore on mount
+  useEffect(() => {
+    (async () => {
+      const userId = await signInAnonymouslyIfNeeded();
+      setUid(userId);
+      if (userId) {
+        const session = await loadSession(userId);
+        if (session && session.state) setSavedSession(session);
+      }
+    })();
+  }, []);
+
+  function handleResumeSession(session) {
+    setForm((f) => ({
+      ...f,
+      state: session.state || f.state,
+      registrationStatus: session.registrationStatus || f.registrationStatus,
+      scenario: session.scenario || f.scenario,
+      intent: session.intent || f.intent
+    }));
+    setSavedSession(null);
+  }
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -67,6 +91,16 @@ export default function App() {
       // Reset contextual secondary flows to initialize new guidance loop
       setSimpleExplain(false);
       setGeminiExplanation("");
+
+      // Track and persist
+      trackEvent("form_submitted", { state: form.state, scenario: form.scenario });
+      saveSession(uid, {
+        state: form.state,
+        registrationStatus: form.registrationStatus,
+        scenario: form.scenario,
+        intent: form.intent,
+        lastStep: "guidance_generated"
+      });
     } catch (e) {
       setError(e.message);
     } finally {
@@ -99,7 +133,12 @@ export default function App() {
       try {
         // Query Gemini to summarize and strip complexity on demand
         const result = await generateSimpleExplanation(guidance, aiContext);
-        setGeminiExplanation(compactWords(result || "", 95));
+        if (result) {
+          setGeminiExplanation(compactWords(result, 95));
+        } else {
+          setError("AI is currently busy. Showing default simplified guidance.");
+          setTimeout(() => setError(""), 5000);
+        }
       } finally {
         setExplainLoading(false);
       }
@@ -128,7 +167,10 @@ export default function App() {
       >
         Skip to main content
       </a>
-      <main id="main-content" className="app-shell" aria-label="Main Application Flow">
+      <main id="main-content" className="app-shell relative" aria-label="Main Application Flow">
+        <Suspense fallback={null}>
+          <TopLanguageSelector />
+        </Suspense>
         <header className="glass-card p-6 md:p-7">
           <p className="kicker mb-2">NagrikAI Pro</p>
           <h1 className="text-2xl md:text-4xl font-bold leading-tight text-slate-900">
@@ -143,121 +185,19 @@ export default function App() {
           </p>
         </header>
 
-        <section className="glass-card p-5 md:p-6 section-gap">
-          <h2 className="text-lg font-semibold mb-4 text-slate-900">Start Your Journey</h2>
-          <form onSubmit={onSubmit} className="grid md:grid-cols-2 gap-4" aria-label="Voter Information Form">
-            <div className="space-y-1">
-              <label htmlFor="age" className="text-sm font-medium text-slate-800">
-                Age
-              </label>
-              <input
-                id="age"
-                className="border rounded-xl p-2.5 w-full bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                type="number"
-                value={form.age}
-                onChange={(e) => setForm((f) => ({ ...f, age: e.target.value }))}
-                aria-required="true"
-              />
-            </div>
-            <div className="space-y-1">
-              <label htmlFor="state" className="text-sm font-medium text-slate-800">
-                State
-              </label>
-              <input
-                id="state"
-                className="border rounded-xl p-2.5 w-full bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                value={form.state}
-                onChange={(e) => setForm((f) => ({ ...f, state: e.target.value }))}
-                aria-required="true"
-              />
-            </div>
-            <div className="space-y-1">
-              <label htmlFor="registrationStatus" className="text-sm font-medium text-slate-800">
-                Registration Status
-              </label>
-              <select
-                id="registrationStatus"
-                className="border rounded-xl p-2.5 w-full bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                value={form.registrationStatus}
-                onChange={(e) => setForm((f) => ({ ...f, registrationStatus: e.target.value }))}
-                aria-required="true"
-              >
-                <option value="registered">Registered</option>
-                <option value="not_registered">Not registered</option>
-                <option value="unsure">Unsure</option>
-              </select>
-            </div>
-            <div className="space-y-1">
-              <label htmlFor="scenario" className="text-sm font-medium text-slate-800">
-                Scenario
-              </label>
-              <select
-                id="scenario"
-                className="border rounded-xl p-2.5 w-full bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                value={form.scenario}
-                onChange={(e) => setForm((f) => ({ ...f, scenario: e.target.value }))}
-                aria-required="true"
-              >
-                {SCENARIOS.map((s) => (
-                  <option key={s.value} value={s.value}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-1">
-              <label htmlFor="migrationType" className="text-sm font-medium text-slate-800">
-                Migration Type
-              </label>
-              <select
-                id="migrationType"
-                className="border rounded-xl p-2.5 w-full bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                value={form.migrationType}
-                onChange={(e) => setForm((f) => ({ ...f, migrationType: e.target.value }))}
-              >
-                <option value="unspecified">Migration type (optional)</option>
-                <option value="intra_state">Moved within same state</option>
-                <option value="inter_state">Moved from another state</option>
-              </select>
-            </div>
-            <div className="space-y-1">
-              <label htmlFor="hasAddressProof" className="text-sm font-medium text-slate-800">
-                Address Proof Availability
-              </label>
-              <select
-                id="hasAddressProof"
-                className="border rounded-xl p-2.5 w-full bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                value={String(form.hasAddressProof)}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, hasAddressProof: e.target.value === "true" }))
-                }
-              >
-                <option value="true">I have current address proof</option>
-                <option value="false">I do not have current address proof</option>
-              </select>
-            </div>
-            <div className="space-y-1 md:col-span-2">
-              <label htmlFor="intent" className="text-sm font-medium text-slate-800">
-                Describe Your Issue (Optional)
-              </label>
-              <input
-                id="intent"
-                className="border rounded-xl p-2.5 w-full bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                placeholder="Describe your issue (optional)"
-                value={form.intent}
-                onChange={(e) => setForm((f) => ({ ...f, intent: e.target.value }))}
-              />
-            </div>
-            <button 
-              disabled={loading} 
-              className="btn-primary w-fit mt-1 disabled:opacity-60 focus:ring-2 focus:ring-blue-700"
-              aria-live="polite"
-            >
-              {loading ? "Generating Guidance..." : "Get My Next Step"}
-            </button>
-          </form>
-          {error ? <p role="alert" className="text-red-700 font-medium text-sm mt-3">{error}</p> : null}
-        </section>
+        {savedSession && !guidance && (
+          <Suspense fallback={null}>
+            <ResumeSessionBanner
+              session={savedSession}
+              onResume={handleResumeSession}
+              onDismiss={() => setSavedSession(null)}
+            />
+          </Suspense>
+        )}
+
+        <Suspense fallback={<div className="p-8 text-center text-slate-500 animate-pulse">Loading form...</div>}>
+          <GuidanceForm form={form} setForm={setForm} onSubmit={onSubmit} loading={loading} error={error} />
+        </Suspense>
 
         {guidance ? (
           <Suspense fallback={<div className="p-8 text-center text-slate-500 animate-pulse">Loading guidance components...</div>}>
@@ -299,6 +239,10 @@ export default function App() {
                     steps={getDoThisNowSteps(guidance)} 
                     warnings={getSmartWarnings(guidance)} 
                   />
+                </section>
+
+                <section className="section-gap">
+                  <LocationExplorer form={form} guidance={guidance} />
                 </section>
 
                 <section className="section-gap flex justify-end">

@@ -2,30 +2,13 @@ import "dotenv/config";
 import { Router } from "express";
 import {
   validateGeminiChatRequest,
-  validateGeminiExplainRequest
+  validateGeminiExplainRequest,
+  validateGeminiMapsExplainRequest
 } from "../middleware/validateRequest.middleware.js";
+import { buildMapsExplainPrompt } from "../services/mapsExplain.service.js";
 
 const router = Router();
 
-// Strict AI Endpoint Token Bucketing (5 requests per IP per minute)
-const aiRateLimitMap = new Map();
-function llmRateLimiter(req, res, next) {
-  const ip = req.ip || req.connection?.remoteAddress || "anonymous";
-  const now = Date.now();
-  if (!aiRateLimitMap.has(ip)) aiRateLimitMap.set(ip, []);
-  
-  const recentHits = aiRateLimitMap.get(ip).filter(timestamp => now - timestamp < 60000);
-  if (recentHits.length >= 5) {
-    return res.status(429).json({ error: "Rate limit exceeded. Please wait a minute before requesting more AI actions." });
-  }
-  
-  recentHits.push(now);
-  aiRateLimitMap.set(ip, recentHits);
-  
-  // Safely cull the IP map against DDOS exhaustion
-  if (aiRateLimitMap.size > 1000) aiRateLimitMap.clear();
-  next();
-}
 const BASE_POLICY = [
   "You are helping a user in an Indian election guidance system.",
   "Follow Election Commission of India process language.",
@@ -133,6 +116,8 @@ function buildChatPrompt(message, userContext, guidance) {
   ].join("\n");
 }
 
+/* ---------- Gemini caller with timeout + retry ---------- */
+
 async function callGemini(prompt, contextTag, options = {}) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -142,17 +127,27 @@ async function callGemini(prompt, contextTag, options = {}) {
 
   const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
   const maxAttempts = 3;
-  const { maxWords = 120, maxLines = 8 } = options;
+  const { maxWords = 120, maxLines = 8, timeoutMs = 0 } = options;
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    let abortTimer;
     try {
-      const response = await fetch(GEMINI_URL, {
+      const fetchInit = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }]
         })
-      });
+      };
+
+      if (timeoutMs > 0) {
+        const controller = new AbortController();
+        fetchInit.signal = controller.signal;
+        abortTimer = setTimeout(() => controller.abort(), timeoutMs);
+      }
+
+      const response = await fetch(GEMINI_URL, fetchInit);
+      if (abortTimer) clearTimeout(abortTimer);
 
       const data = await response.json();
 
@@ -174,6 +169,7 @@ async function callGemini(prompt, contextTag, options = {}) {
 
       return normalizeText(text, maxWords, maxLines);
     } catch (error) {
+      if (abortTimer) clearTimeout(abortTimer);
       console.error(`[gemini:${contextTag}] Request failed:`, error);
       if (attempt < maxAttempts) {
         const waitMs = 250 * attempt;
@@ -186,6 +182,54 @@ async function callGemini(prompt, contextTag, options = {}) {
 
   return null;
 }
+
+/* ---------- AI endpoint rate limiter (5 req/IP/min) ---------- */
+
+const aiRateLimitMap = new Map();
+
+function llmRateLimiter(req, res, next) {
+  const ip = req.ip || req.connection?.remoteAddress || "anonymous";
+  const now = Date.now();
+  if (!aiRateLimitMap.has(ip)) aiRateLimitMap.set(ip, []);
+
+  const recentHits = aiRateLimitMap.get(ip).filter((ts) => now - ts < 60000);
+  if (recentHits.length >= 5) {
+    return res
+      .status(429)
+      .json({ error: "Rate limit exceeded. Please wait a minute before requesting more AI actions." });
+  }
+
+  recentHits.push(now);
+  aiRateLimitMap.set(ip, recentHits);
+
+  if (aiRateLimitMap.size > 1000) aiRateLimitMap.clear();
+  next();
+}
+
+/* ---------- TTL cache for maps-explain responses ---------- */
+
+const mapsCache = new Map();
+const MAPS_CACHE_TTL = 5 * 60 * 1000;
+
+function getMapsCache(key) {
+  const entry = mapsCache.get(key);
+  if (!entry) return undefined;
+  if (Date.now() > entry.exp) {
+    mapsCache.delete(key);
+    return undefined;
+  }
+  return entry.val;
+}
+
+function setMapsCache(key, val) {
+  if (mapsCache.size > 200) {
+    const oldest = mapsCache.keys().next().value;
+    mapsCache.delete(oldest);
+  }
+  mapsCache.set(key, { val, exp: Date.now() + MAPS_CACHE_TTL });
+}
+
+/* ---------- Routes ---------- */
 
 router.post("/explain", llmRateLimiter, validateGeminiExplainRequest, async (req, res) => {
   try {
@@ -216,6 +260,31 @@ router.post("/chat", llmRateLimiter, validateGeminiChatRequest, async (req, res)
   } catch (error) {
     console.error("[gemini:chat] Route error:", error);
     return res.status(500).json({ error: "Gemini chat failed." });
+  }
+});
+
+router.post("/maps-explain", llmRateLimiter, validateGeminiMapsExplainRequest, async (req, res) => {
+  try {
+    const { state, intent, registrationStatus, nextBestAction } = req.body || {};
+
+    const cacheKey = `${state || ""}|${intent || ""}|${registrationStatus || ""}`;
+    const cached = getMapsCache(cacheKey);
+    if (cached !== undefined) {
+      return res.json({ text: cached });
+    }
+
+    const prompt = buildMapsExplainPrompt({ state, intent, registrationStatus, nextBestAction });
+    const text = await callGemini(prompt, "maps-explain", {
+      maxWords: 100,
+      maxLines: 6,
+      timeoutMs: 3000
+    });
+
+    setMapsCache(cacheKey, text);
+    return res.json({ text });
+  } catch (error) {
+    console.error("[gemini:maps-explain] Route error:", error);
+    return res.json({ text: null });
   }
 });
 

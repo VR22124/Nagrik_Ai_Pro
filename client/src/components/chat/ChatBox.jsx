@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { geminiChat } from "../../services/geminiApi";
+import { trackEvent } from "../../services/analytics";
 
 function compactText(text, maxWords = 95) {
   const normalized = String(text || "")
@@ -22,6 +23,7 @@ export default function ChatBox({ userContext = {}, guidance = {} }) {
     if (!input.trim()) return;
     setMessages((msgs) => [...msgs, { from: "user", text: input }]);
     setLoading(true);
+    trackEvent("chat_message_sent");
     try {
       const reply = await geminiChat(input, { userContext, guidance });
       setMessages((msgs) => [

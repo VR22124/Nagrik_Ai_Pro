@@ -10,11 +10,11 @@ import {
 } from "../../src/services/electionLogic.service.js";
 
 test("eligibility returns true for age >= 18", () => {
-  assert.equal(checkEligibility(22).eligible, true);
+  assert.equal(checkEligibility(22).isEligible, true);
 });
 
 test("eligibility returns false for age < 18", () => {
-  assert.equal(checkEligibility(17).eligible, false);
+  assert.equal(checkEligibility(17).isEligible, false);
 });
 
 test("maps form 6 for unregistered", () => {

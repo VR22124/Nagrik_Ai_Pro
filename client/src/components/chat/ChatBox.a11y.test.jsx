@@ -1,7 +1,8 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import { axe, toHaveNoViolations } from "jest-axe";
-import ChatBox from "../src/components/chat/ChatBox";
+import { expect, test } from "vitest";
+import ChatBox from "./ChatBox";
 
 expect.extend(toHaveNoViolations);
 

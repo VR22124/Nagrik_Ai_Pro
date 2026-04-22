@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "https://nagrik-ai-pro.onrender.com/api";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
 
 async function postGemini(path, payload) {
   try {
@@ -30,4 +30,8 @@ export async function generateSimpleExplanation(response, userContext = {}) {
 export async function geminiChat(message, options = {}) {
   const { userContext = {}, guidance = {} } = options;
   return postGemini("/gemini/chat", { message, userContext, guidance });
+}
+
+export async function geminiMapsExplain({ state, intent, registrationStatus, nextBestAction }) {
+  return postGemini("/gemini/maps-explain", { state, intent, registrationStatus, nextBestAction });
 }

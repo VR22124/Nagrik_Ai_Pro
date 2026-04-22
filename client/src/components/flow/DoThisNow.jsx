@@ -1,4 +1,6 @@
-export default function DoThisNow({ steps = [], warnings = [] }) {
+import React from "react";
+
+export default React.memo(function DoThisNow({ steps = [], warnings = [] }) {
   if (!steps.length && !warnings.length) return null;
 
   return (
@@ -39,4 +41,4 @@ export default function DoThisNow({ steps = [], warnings = [] }) {
       ) : null}
     </section>
   );
-}
+});

@@ -42,12 +42,9 @@ const CACHE_TTL = 1000 * 60 * 10; // 10 minutes
 export function getStatesConfig() {
   const now = Date.now();
   if (_cachedStates && now - _lastLoad < CACHE_TTL) return _cachedStates;
-  // ...existing code to load states...
-  // Example: _cachedStates = [ ... ];
-  // _lastLoad = now;
-  // return _cachedStates;
-  // For now, just return the static export if present
-  return states;
+  _cachedStates = SUPPORTED_STATES;
+  _lastLoad = now;
+  return _cachedStates;
 }
 
 export function getAreaTypeNuance(voterAreaType) {

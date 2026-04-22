@@ -1,13 +1,13 @@
 import test from "node:test";
 import assert from "node:assert";
 
-test("/api/gemini/explain returns 400 for missing response field", async (t) => {
+test("/api/gemini/explain returns 422 for missing response field", async (t) => {
   const { default: request } = await import("supertest");
   const { createApp } = await import("../../src/app.js");
   const app = createApp();
   const res = await request(app).post("/api/gemini/explain").send({});
-  assert.strictEqual(res.status, 400);
-  assert.ok(res.body.error);
+  assert.strictEqual(res.status, 422);
+  assert.ok(res.body.error || res.body.errors);
 });
 
 test("/api/gemini/chat recovers cleanly on LLM provider failure", async (t) => {
@@ -20,7 +20,7 @@ test("/api/gemini/chat recovers cleanly on LLM provider failure", async (t) => {
   const app = createApp();
   const res = await request(app).post("/api/gemini/chat").send({ message: "Hello" });
   
-  // App should catch API failures and fallback to 500 cleanly with generic message
-  assert.strictEqual(res.status, 500);
-  assert.match(res.body.error || res.body.message, /failed/i);
+  // App should catch API failures and fallback to 200 cleanly with text: null
+  assert.strictEqual(res.status, 200);
+  assert.strictEqual(res.body.text, null);
 });

@@ -12,7 +12,8 @@
     "test": "npm run test -w server"
   },
   "dependencies": {
-    "helmet": "^8.1.0"
+    "helmet": "^8.1.0",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "eslint": "^9.39.4",

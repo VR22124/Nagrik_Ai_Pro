@@ -24,7 +24,7 @@ function createResponseCapture() {
 
 test("gemini explain returns null text when upstream fails", async () => {
   process.env.GEMINI_API_KEY = "test-key";
-  const explainHandler = findRouteHandler("/explain", 1);
+  const explainHandler = findRouteHandler("/explain", 2);
   assert.ok(explainHandler, "expected explain route handler");
 
   const originalFetch = global.fetch;

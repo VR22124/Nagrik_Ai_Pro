@@ -137,3 +137,51 @@ export function validateGeminiChatRequest(req, _res, next) {
   };
   return next();
 }
+
+export function validateGeminiMapsExplainRequest(req, _res, next) {
+  const payload = req.body || {};
+  const errors = [];
+
+  const payloadSize = JSON.stringify(payload).length;
+  if (payloadSize > 1000) {
+    errors.push("request payload must be under 1000 characters");
+  }
+
+  if (!payload.state || typeof payload.state !== "string" || !payload.state.trim()) {
+    errors.push("state is required and must be a non-empty string");
+  }
+  if (typeof payload.state === "string" && payload.state.length > 80) {
+    errors.push("state must be at most 80 characters");
+  }
+  if (payload.intent !== undefined && typeof payload.intent !== "string") {
+    errors.push("intent must be a string if provided");
+  }
+  if (typeof payload.intent === "string" && payload.intent.length > 300) {
+    errors.push("intent must be at most 300 characters");
+  }
+  if (
+    payload.registrationStatus !== undefined &&
+    !REG_STATUSES.has(payload.registrationStatus)
+  ) {
+    errors.push("registrationStatus must be one of: registered, not_registered, unsure");
+  }
+  if (payload.nextBestAction !== undefined && typeof payload.nextBestAction !== "string") {
+    errors.push("nextBestAction must be a string if provided");
+  }
+  if (typeof payload.nextBestAction === "string" && payload.nextBestAction.length > 240) {
+    errors.push("nextBestAction must be at most 240 characters");
+  }
+
+  if (errors.length) return next(new AppError("Validation failed", 422, errors));
+
+  req.body = {
+    state: sanitizeText(payload.state, 80),
+    intent: payload.intent === undefined ? undefined : sanitizeText(payload.intent, 300),
+    registrationStatus: payload.registrationStatus || "unknown",
+    nextBestAction:
+      payload.nextBestAction === undefined ? undefined : sanitizeText(payload.nextBestAction, 240)
+  };
+
+  return next();
+}
+

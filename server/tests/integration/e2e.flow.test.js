@@ -22,7 +22,7 @@ describe("NagrikAI Pro E2E Workflow Test", () => {
 
     // 3. E2E Network invocation over internal express server mapping
     const res = await request(app)
-      .post("/api/eligibility")
+      .post("/api/guidance/generate")
       .send(testPayload)
       .set("Accept", "application/json");
 
